@@ -1,0 +1,24 @@
+name: Merge to Main
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Merge to Main
+        run: |
+          git config user.name 'GitHub Actions'
+          git config user.email '<>'
+          git merge "${{ github.event.pull_request.head.ref }}" -m "Merge pull request #${{ github.event.pull_request.number }}"
+
+      - name: Push changes to Main
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
